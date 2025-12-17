@@ -183,12 +183,3 @@ The application uses the `Development` environment by default when running local
 ### Logging
 
 Logging is configured in `appsettings.json`. Default log level is `Information` for the application and `Warning` for Microsoft.AspNetCore.
-
-## License
-
-[Specify your license here]
-
-## Contributing
-
-[Add contribution guidelines if applicable]
-
