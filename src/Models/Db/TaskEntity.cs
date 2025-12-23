@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskHub.API.Models.Db;
 
-internal class TaskEntity {
+public class TaskEntity {
 
     public TaskEntity(string title, string description, DateTime dueDate) : base()
     {

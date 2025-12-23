@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskHub.API.Models.Dto;
 
-internal class TaskCreateRequest
+public class TaskCreateRequest
 {
     [Required]
     public string Title { get; set; } = string.Empty;

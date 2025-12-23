@@ -1,4 +1,6 @@
-internal class TaskResponse
+namespace TaskHub.API.Models.Dto;
+
+public class TaskResponse
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
