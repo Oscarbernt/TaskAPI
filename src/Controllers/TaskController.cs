@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskHub.Data;
 using Microsoft.EntityFrameworkCore;
-using TaskHub.Models;
-using TaskHub.Models.Dto;
+using TaskHub.API.Data;
+using TaskHub.API.Models.Db;
+using TaskHub.API.Models.Dto;
 
-namespace TaskHub.Controllers;
+namespace TaskHub.API.Controllers;
 
 [ApiController]
 [Route("api/tasks")]
-public class TaskController(ApplicationDbContext context) : ControllerBase
+internal class TaskController(ApplicationDbContext context) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetTasks()

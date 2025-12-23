@@ -1,0 +1,17 @@
+root = true
+
+[*.cs]
+charset = utf-8
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+dotnet_sort_system_directives_first = true
+
+[*.{cs,csx}]
+csharp_style_expression_bodied_methods = false:suggestion
+csharp_style_expression_bodied_properties = false:suggestion
+
+# Project-specific analyzer rule severities
+# Disable CA2007 (Consider calling ConfigureAwait on the awaited task) because this is an ASP.NET Core application
+dotnet_diagnostic.CA2007.severity = none

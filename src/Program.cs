@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TaskHub.Data;
+using TaskHub.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

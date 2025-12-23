@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using TaskHub.Models;
+using TaskHub.API.Models.Db;
 
-namespace TaskHub.Data;
+namespace TaskHub.API.Data;
 
-public class ApplicationDbContext : DbContext
+internal class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
