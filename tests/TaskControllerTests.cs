@@ -64,6 +64,38 @@ namespace TaskHub.Test
         }
 
         [Fact]
+        public async Task CreateTask_NullRequest_ReturnsBadRequest()
+        {
+            using var context = CreateContext(nameof(CreateTask_NullRequest_ReturnsBadRequest));
+            var controller = new TaskController(context);
+
+            var result = await controller.CreateTask(null!);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Request body is required.", bad.Value);
+        }
+
+        [Fact]
+        public async Task CreateTask_InvalidDueDate_ReturnsBadRequest()
+        {
+            using var context = CreateContext(nameof(CreateTask_InvalidDueDate_ReturnsBadRequest));
+            var controller = new TaskController(context);
+
+            var request = new TaskCreateRequest
+            {
+                Title = "Bad",
+                Description = "Bad Desc",
+                DueDate = DateTime.UtcNow.AddDays(-1) // past
+            };
+
+            var result = await controller.CreateTask(request);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(result);
+            var err = Assert.IsType<SerializableError>(bad.Value);
+            Assert.True(err.ContainsKey("dueDate"));
+        }
+
+        [Fact]
         public async Task UpdateTask_Existing_UpdatesAndReturnsOk()
         {
             using var context = CreateContext(nameof(UpdateTask_Existing_UpdatesAndReturnsOk));
@@ -115,6 +147,54 @@ namespace TaskHub.Test
 
             var result = await controller.UpdateTask(9999, request);
             Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateTask_NullRequest_ReturnsBadRequest()
+        {
+            using var context = CreateContext(nameof(UpdateTask_NullRequest_ReturnsBadRequest));
+            var entity = new TaskEntity("Old", "Old Desc", DateTime.UtcNow.AddDays(1))
+            {
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            context.Tasks.Add(entity);
+            await context.SaveChangesAsync();
+
+            var controller = new TaskController(context);
+
+            var result = await controller.UpdateTask(entity.Id, null!);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Request body is required.", bad.Value);
+        }
+
+        [Fact]
+        public async Task UpdateTask_InvalidDueDate_ReturnsBadRequest()
+        {
+            using var context = CreateContext(nameof(UpdateTask_InvalidDueDate_ReturnsBadRequest));
+            var entity = new TaskEntity("Old", "Old Desc", DateTime.UtcNow.AddDays(1))
+            {
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            context.Tasks.Add(entity);
+            await context.SaveChangesAsync();
+
+            var controller = new TaskController(context);
+            var request = new TaskUpdateRequest
+            {
+                Title = "Updated",
+                Description = "Updated Desc",
+                DueDate = DateTime.UtcNow.AddDays(-2), // past
+                IsCompleted = false
+            };
+
+            var result = await controller.UpdateTask(entity.Id, request);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(result);
+            var err = Assert.IsType<SerializableError>(bad.Value);
+            Assert.True(err.ContainsKey("dueDate"));
         }
 
         [Fact]
