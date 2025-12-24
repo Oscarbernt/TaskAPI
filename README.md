@@ -9,164 +9,92 @@ A RESTful API for task management built with ASP.NET Core. TaskHub provides a si
 - Mark tasks as completed
 - SQLite database for data persistence
 - Swagger/OpenAPI documentation
+- Serilog file logging with a custom request logging middleware
 
 ## Technologies
 
-- **.NET 10.0** - Framework
-- **ASP.NET Core** - Web API framework
-- **Entity Framework Core 10.0** - ORM
-- **SQLite** - Database
-- **Swashbuckle.AspNetCore** - Swagger/OpenAPI documentation
+- .NET 10
+- ASP.NET Core
+- Entity Framework Core
+- SQLite
+- Serilog
+- Swashbuckle (Swagger)
 
-## Prerequisites
+## Project layout
 
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
-- A code editor (Visual Studio, Rider, VS Code, etc.)
-
-## Getting Started
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd TaskHub
-```
-
-2. Restore dependencies:
-```bash
-dotnet restore
-```
-
-3. Apply database migrations:
-```bash
-dotnet ef database update
-```
-
-### Running the Application
-
-Run the application using one of the following methods:
-
-**Using .NET CLI:**
-```bash
-dotnet run
-```
-
-**Using Visual Studio/Rider:**
-- Press F5 or click the Run button
-
-The API will be available at:
-- HTTP: `http://localhost:5067`
-- HTTPS: `https://localhost:7193`
-
-### Swagger Documentation
-
-When running in Development mode, Swagger UI is automatically available at:
-- `https://localhost:7193/swagger` (HTTPS)
-- `http://localhost:5067/swagger` (HTTP)
-
-## API Endpoints
-
-All endpoints are prefixed with `/api/tasks`
-
-### Get All Tasks
-```http
-GET /api/tasks
-```
-
-**Response:** Returns a list of all tasks
-
-### Create Task
-```http
-POST /api/tasks
-Content-Type: application/json
-
-{
-  "title": "Complete project",
-  "description": "Finish the TaskHub API project",
-  "dueDate": "2024-12-31T23:59:59Z"
-}
-```
-
-**Response:** Returns the created task with generated ID and timestamps
-
-### Update Task
-```http
-PUT /api/tasks/{id}
-Content-Type: application/json
-
-{
-  "title": "Updated title",
-  "description": "Updated description",
-  "dueDate": "2024-12-31T23:59:59Z",
-  "isCompleted": true
-}
-```
-
-**Response:** Returns the updated task
-
-### Delete Task
-```http
-DELETE /api/tasks/{id}
-```
-
-**Response:** 204 No Content
-
-## Data Models
-
-### TaskEntity
-- `Id` (int) - Primary key
-- `Title` (string, required) - Task title
-- `Description` (string, required) - Task description
-- `DueDate` (DateTime, required) - Task due date
-- `IsCompleted` (bool) - Completion status
-- `CreatedAt` (DateTime) - Creation timestamp
-- `UpdatedAt` (DateTime) - Last update timestamp
-
-## Project Structure
+Source lives under the `src` directory:
 
 ```
 TaskHub/
-├── Controllers/
-│   └── TaskController.cs      # API endpoints
-├── Data/
-│   └── ApplicationDbContext.cs # EF Core DbContext
-├── Models/
-│   ├── Db/
-│   │   └── TaskEntity.cs      # Database entity
-│   └── Dto/
-│       ├── TaskCreateRequest.cs
-│       ├── TaskResponse.cs
-│       └── TaskUpdateRequest.cs
-├── Migrations/                # EF Core migrations
-├── Program.cs                 # Application entry point
-├── appsettings.json          # Configuration
-└── TaskHub.csproj            # Project file
+├── src/
+│   ├── Controllers/
+│   │   └── TaskController.cs
+│   ├── Data/
+│   │   └── ApplicationDbContext.cs
+│   ├── Infrastructure/
+│   │   └── Logging/
+│   │       ├── RequestLoggingMiddleware.cs
+│   │       └── RequestLog.cs
+│   ├── Models/
+│   │   ├── Db/
+│   │   │   └── TaskEntity.cs
+│   │   └── Dto/
+│   ├── Program.cs
+│   └── appsettings.json
+├── tests/
+└── README.md
 ```
 
-## Database
+## Prerequisites
 
-The application uses SQLite with a database file named `TaskHub.db` in the project root. The database is automatically created when you run migrations.
+- .NET 10 SDK
+- dotnet-ef tool (for migrations) — install with:
 
-### Creating Migrations
-
-To create a new migration after making model changes:
-```bash
-dotnet ef migrations add <MigrationName>
+```
+dotnet tool install --global dotnet-ef
 ```
 
-### Applying Migrations
+## Getting started
 
-To apply pending migrations:
-```bash
+All commands below assume you are in the repository root unless noted; many CLI commands should be run from the `src` folder.
+
+1. Enter the `src` folder:
+
+```
+cd src
+```
+
+2. Restore dependencies:
+
+```
+dotnet restore
+```
+
+3. Apply database migrations and create the SQLite database:
+
+```
 dotnet ef database update
+```
+
+4. Run the application:
+
+```
+dotnet run
+```
+
+## Running tests
+
+From the repository root:
+
+```
+dotnet test
 ```
 
 ## Configuration
 
-Database connection string can be configured in `appsettings.json`:
+The primary configuration file is `src/appsettings.json`. Example connection string:
 
-```json
+```
 {
   "ConnectionStrings": {
     "DefaultConnection": "Data Source=TaskHub.db"
@@ -174,12 +102,33 @@ Database connection string can be configured in `appsettings.json`:
 }
 ```
 
-## Development
+The app uses SQLite; the database file `TaskHub.db` will be created by EF Core when migrations are applied.
 
-### Environment
+## Logging
 
-The application uses the `Development` environment by default when running locally. Swagger UI is only enabled in Development mode.
+Serilog is configured and writes rotating log files to the `logs` folder by default (`logs/log-.txt`). The project includes a `RequestLoggingMiddleware` in `src/Infrastructure/Logging` that emits structured request/response logs.
 
-### Logging
+If you want to suppress specific framework logs such as the "Executing endpoint '...'" messages, adjust logging overrides in `appsettings.json` or Serilog configuration. Example Serilog override (in code) used by the project:
 
-Logging is configured in `appsettings.json`. Default log level is `Information` for the application and `Warning` for Microsoft.AspNetCore.
+- `MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)`
+
+Or set the category in `appsettings.json` under `Logging:LogLevel` for the specific category such as `Microsoft.AspNetCore.Routing` or `Microsoft.AspNetCore.Routing.EndpointMiddleware`.
+
+## Swagger
+
+When running in the Development environment, Swagger UI is enabled at `/swagger`.
+
+## API Endpoints
+
+Base route: `/api/tasks`
+
+- GET `/api/tasks` — list tasks
+- GET `/api/tasks/{id}` — get a task
+- POST `/api/tasks` — create a task
+- PUT `/api/tasks/{id}` — update a task
+- DELETE `/api/tasks/{id}` — delete a task
+
+## Notes
+
+- Development commands that act on the project (migrations, run) are easiest when executed from `src`.
+- The repository includes a `tests` project; run tests with `dotnet test`.
