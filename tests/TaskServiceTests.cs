@@ -3,9 +3,8 @@ using TaskHub.API.Models.Db;
 using TaskHub.API.Models.Dto;
 using TaskHub.API.Repositories.Interfaces;
 using TaskHub.API.Services;
-using Xunit;
 
-namespace TaskHub.Test
+namespace TaskHub.Tests
 {
     public class TaskServiceTests
     {
@@ -15,17 +14,17 @@ namespace TaskHub.Test
             var mockRepo = new Mock<ITaskRepository>();
             var entities = new List<TaskEntity>
             {
-                new("Task 1", "Desc 1", DateTime.UtcNow.AddDays(1)) 
-                { 
-                    Id = 1, 
-                    CreatedAt = DateTime.UtcNow, 
+                new("Task 1", "Desc 1", DateTime.UtcNow.AddDays(1))
+                {
+                    Id = 1,
+                    CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     IsCompleted = false
                 },
-                new("Task 2", "Desc 2", DateTime.UtcNow.AddDays(2)) 
-                { 
-                    Id = 2, 
-                    CreatedAt = DateTime.UtcNow, 
+                new("Task 2", "Desc 2", DateTime.UtcNow.AddDays(2))
+                {
+                    Id = 2,
+                    CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     IsCompleted = true
                 }
@@ -99,9 +98,9 @@ namespace TaskHub.Test
                 Description = "New Description",
                 DueDate = DateTime.UtcNow.AddDays(1)
             };
-            
+
             mockRepo.Setup(r => r.AddAsync(It.IsAny<TaskEntity>()))
-                .ReturnsAsync((TaskEntity t) => 
+                .ReturnsAsync((TaskEntity t) =>
                 {
                     t.Id = 1;
                     return t;
@@ -115,8 +114,8 @@ namespace TaskHub.Test
             Assert.Equal(request.Title, result.Title);
             Assert.Equal(request.Description, result.Description);
             Assert.False(result.IsCompleted);
-            mockRepo.Verify(r => r.AddAsync(It.Is<TaskEntity>(t => 
-                t.Title == request.Title && 
+            mockRepo.Verify(r => r.AddAsync(It.Is<TaskEntity>(t =>
+                t.Title == request.Title &&
                 t.Description == request.Description &&
                 t.IsCompleted == false)), Times.Once);
         }
@@ -127,7 +126,7 @@ namespace TaskHub.Test
             var mockRepo = new Mock<ITaskRepository>();
             var service = new TaskService(mockRepo.Object);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 service.CreateTaskAsync(null!));
         }
 
@@ -143,7 +142,7 @@ namespace TaskHub.Test
                 DueDate = DateTime.UtcNow.AddDays(1)
             };
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
             Assert.Equal("title", exception.ParamName);
             Assert.Contains("Title is required", exception.Message);
@@ -161,7 +160,7 @@ namespace TaskHub.Test
                 DueDate = DateTime.UtcNow.AddDays(1)
             };
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
             Assert.Equal("title", exception.ParamName);
             Assert.Contains("must not exceed 200 characters", exception.Message);
@@ -179,7 +178,7 @@ namespace TaskHub.Test
                 DueDate = DateTime.UtcNow.AddDays(1)
             };
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
             Assert.Equal("description", exception.ParamName);
             Assert.Contains("Description is required", exception.Message);
@@ -197,7 +196,7 @@ namespace TaskHub.Test
                 DueDate = DateTime.UtcNow.AddDays(1)
             };
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
             Assert.Equal("description", exception.ParamName);
             Assert.Contains("must not exceed 2000 characters", exception.Message);
@@ -215,7 +214,7 @@ namespace TaskHub.Test
                 DueDate = DateTime.UtcNow.AddDays(-1)
             };
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
             Assert.Equal("dueDate", exception.ParamName);
             Assert.Contains("must be today or a future date", exception.Message);
@@ -251,8 +250,8 @@ namespace TaskHub.Test
             Assert.Equal(request.Title, result.Title);
             Assert.Equal(request.Description, result.Description);
             Assert.Equal(request.IsCompleted, result.IsCompleted);
-            mockRepo.Verify(r => r.UpdateAsync(It.Is<TaskEntity>(t => 
-                t.Title == request.Title && 
+            mockRepo.Verify(r => r.UpdateAsync(It.Is<TaskEntity>(t =>
+                t.Title == request.Title &&
                 t.IsCompleted == true)), Times.Once);
         }
 
@@ -283,7 +282,7 @@ namespace TaskHub.Test
             var mockRepo = new Mock<ITaskRepository>();
             var service = new TaskService(mockRepo.Object);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 service.UpdateTaskAsync(1, null!));
         }
 
@@ -308,7 +307,7 @@ namespace TaskHub.Test
                 IsCompleted = false
             };
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.UpdateTaskAsync(1, request));
             Assert.Equal("title", exception.ParamName);
         }

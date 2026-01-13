@@ -3,11 +3,8 @@ using Moq;
 using TaskHub.API.Controllers;
 using TaskHub.API.Models.Dto;
 using TaskHub.API.Services.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
-namespace TaskHub.Test
+namespace TaskHub.Tests
 {
     public class TaskControllerTests
     {
@@ -26,7 +23,7 @@ namespace TaskHub.Test
             var result = await controller.GetTasks();
 
             var ok = Assert.IsType<OkObjectResult>(result);
-            var items = Assert.IsAssignableFrom<IEnumerable<TaskResponse>>(ok.Value);
+            var items = Assert.IsType<IEnumerable<TaskResponse>>(ok.Value, exactMatch: false);
             Assert.Equal(2, items.Count());
         }
 
@@ -34,15 +31,15 @@ namespace TaskHub.Test
         public async Task GetTask_ExistingId_ReturnsTask()
         {
             var mockService = new Mock<ITaskService>();
-            var task = new TaskResponse 
-            { 
-                Id = 1, 
-                Title = "Test", 
-                Description = "Test Desc", 
-                DueDate = DateTime.UtcNow.AddDays(1), 
-                IsCompleted = false, 
-                CreatedAt = DateTime.UtcNow, 
-                UpdatedAt = DateTime.UtcNow 
+            var task = new TaskResponse
+            {
+                Id = 1,
+                Title = "Test",
+                Description = "Test Desc",
+                DueDate = DateTime.UtcNow.AddDays(1),
+                IsCompleted = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
             mockService.Setup(s => s.GetTaskByIdAsync(1)).ReturnsAsync(task);
 

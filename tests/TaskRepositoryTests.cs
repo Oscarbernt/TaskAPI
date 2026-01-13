@@ -2,9 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using TaskHub.API.Data;
 using TaskHub.API.Models.Db;
 using TaskHub.API.Repositories;
-using Xunit;
 
-namespace TaskHub.Test
+namespace TaskHub.Tests
 {
     public class TaskRepositoryTests
     {
@@ -99,7 +98,7 @@ namespace TaskHub.Test
 
             Assert.NotNull(result);
             Assert.True(result.Id > 0);
-            
+
             var savedTask = await context.Tasks.FindAsync(result.Id);
             Assert.NotNull(savedTask);
             Assert.Equal(task.Title, savedTask.Title);
@@ -118,7 +117,7 @@ namespace TaskHub.Test
             };
             context.Tasks.Add(task);
             await context.SaveChangesAsync();
-            
+
             var repository = new TaskRepository(context);
             task.Title = "Updated";
             task.Description = "Updated Description";
