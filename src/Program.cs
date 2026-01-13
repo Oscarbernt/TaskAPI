@@ -4,6 +4,10 @@ using Serilog;
 using Serilog.Events;
 using TaskHub.API.Data;
 using TaskHub.API.Infrastructure.Logging;
+using TaskHub.API.Repositories;
+using TaskHub.API.Repositories.Interfaces;
+using TaskHub.API.Services;
+using TaskHub.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +32,9 @@ builder.Services.AddLogging(loggingBuilder =>
 // Configure Entity Framework Core with SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 var app = builder.Build();
 
