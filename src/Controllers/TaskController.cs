@@ -29,35 +29,19 @@ public class TaskController(ITaskService taskService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask(TaskCreateRequest request)
     {
-        try
-        {
-            var task = await taskService.CreateTaskAsync(request);
-            return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
-        }
-        catch (ArgumentException ex)
-        {
-            ModelState.AddModelError(ex.ParamName ?? string.Empty, ex.Message);
-            return BadRequest(ModelState);
-        }
+        var task = await taskService.CreateTaskAsync(request);
+        return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTask(int id, TaskUpdateRequest request)
     {
-        try
+        var task = await taskService.UpdateTaskAsync(id, request);
+        if (task == null)
         {
-            var task = await taskService.UpdateTaskAsync(id, request);
-            if (task == null)
-            {
-                return NotFound();
-            }
-            return Ok(task);
+            return NotFound();
         }
-        catch (ArgumentException ex)
-        {
-            ModelState.AddModelError(ex.ParamName ?? string.Empty, ex.Message);
-            return BadRequest(ModelState);
-        }
+        return Ok(task);
     }
 
     [HttpDelete("{id}")]

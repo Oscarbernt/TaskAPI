@@ -99,7 +99,7 @@ namespace TaskHub.Tests
         }
 
         [Fact]
-        public async Task CreateTask_InvalidTitle_ReturnsBadRequest()
+        public async Task CreateTask_InvalidTitle_ThrowsArgumentException()
         {
             var mockService = new Mock<ITaskService>();
             var request = new TaskCreateRequest
@@ -112,15 +112,14 @@ namespace TaskHub.Tests
                 .ThrowsAsync(new ArgumentException("Title is required.", nameof(request.Title)));
 
             var controller = new TaskController(mockService.Object);
-            var result = await controller.CreateTask(request);
 
-            var bad = Assert.IsType<BadRequestObjectResult>(result);
-            var modelState = Assert.IsType<SerializableError>(bad.Value);
-            Assert.True(modelState.ContainsKey("Title"));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => controller.CreateTask(request));
+            Assert.Equal("Title", exception.ParamName);
+            Assert.Contains("Title is required", exception.Message);
         }
 
         [Fact]
-        public async Task CreateTask_InvalidDueDate_ReturnsBadRequest()
+        public async Task CreateTask_InvalidDueDate_ThrowsArgumentException()
         {
             var mockService = new Mock<ITaskService>();
             var request = new TaskCreateRequest
@@ -133,11 +132,10 @@ namespace TaskHub.Tests
                 .ThrowsAsync(new ArgumentException("DueDate must be today or a future date (UTC).", nameof(request.DueDate)));
 
             var controller = new TaskController(mockService.Object);
-            var result = await controller.CreateTask(request);
 
-            var bad = Assert.IsType<BadRequestObjectResult>(result);
-            var modelState = Assert.IsType<SerializableError>(bad.Value);
-            Assert.True(modelState.ContainsKey("DueDate"));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => controller.CreateTask(request));
+            Assert.Equal("DueDate", exception.ParamName);
+            Assert.Contains("DueDate must be today or a future date", exception.Message);
         }
 
         [Fact]
@@ -193,7 +191,7 @@ namespace TaskHub.Tests
         }
 
         [Fact]
-        public async Task UpdateTask_InvalidDueDate_ReturnsBadRequest()
+        public async Task UpdateTask_InvalidDueDate_ThrowsArgumentException()
         {
             var mockService = new Mock<ITaskService>();
             var request = new TaskUpdateRequest
@@ -207,11 +205,10 @@ namespace TaskHub.Tests
                 .ThrowsAsync(new ArgumentException("DueDate must be today or a future date (UTC).", nameof(request.DueDate)));
 
             var controller = new TaskController(mockService.Object);
-            var result = await controller.UpdateTask(1, request);
 
-            var bad = Assert.IsType<BadRequestObjectResult>(result);
-            var modelState = Assert.IsType<SerializableError>(bad.Value);
-            Assert.True(modelState.ContainsKey("DueDate"));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => controller.UpdateTask(1, request));
+            Assert.Equal("DueDate", exception.ParamName);
+            Assert.Contains("DueDate must be today or a future date", exception.Message);
         }
 
         [Fact]

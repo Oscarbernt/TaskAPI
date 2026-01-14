@@ -4,6 +4,7 @@ using Serilog;
 using Serilog.Events;
 using TaskHub.API.Data;
 using TaskHub.API.Infrastructure.Logging;
+using TaskHub.API.Infrastructure.Middleware;
 using TaskHub.API.Repositories;
 using TaskHub.API.Repositories.Interfaces;
 using TaskHub.API.Services;
@@ -45,6 +46,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
