@@ -9,7 +9,9 @@ namespace TaskHub.API.Repositories
     {
         public async Task<IEnumerable<TaskEntity>> GetAllAsync()
         {
-            return await context.Tasks.ToListAsync();
+            return await context.Tasks
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<TaskEntity?> GetByIdAsync(int id)
