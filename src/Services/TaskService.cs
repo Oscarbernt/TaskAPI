@@ -78,28 +78,29 @@ namespace TaskHub.API.Services
 
         private static void ValidateTaskFields(string title, string description, DateTime dueDate)
         {
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly - Using DTO property names instead of parameter names for client-facing error messages
             if (string.IsNullOrWhiteSpace(title))
             {
-                throw new ArgumentException("Title is required.", nameof(title));
+                throw new ArgumentException("Title is required.", "Title");
             }
             if (title.Length > 200)
             {
-                throw new ArgumentException("Title must not exceed 200 characters.", nameof(title));
+                throw new ArgumentException("Title must not exceed 200 characters.", "Title");
             }
 
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentException("Description is required.", nameof(description));
+                throw new ArgumentException("Description is required.", "Description");
             }
             if (description.Length > 2000)
             {
-                throw new ArgumentException("Description must not exceed 2000 characters.", nameof(description));
+                throw new ArgumentException("Description must not exceed 2000 characters.", "Description");
             }
 
             var todayUtc = DateTime.UtcNow.Date;
             if (dueDate.Date < todayUtc)
             {
-                throw new ArgumentException("DueDate must be today or a future date (UTC).", nameof(dueDate));
+                throw new ArgumentException("DueDate must be today or a future date (UTC).", "DueDate");
             }
         }
 

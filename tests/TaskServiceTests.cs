@@ -144,7 +144,7 @@ namespace TaskHub.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
-            Assert.Equal("title", exception.ParamName);
+            Assert.Equal("Title", exception.ParamName);
             Assert.Contains("Title is required", exception.Message);
         }
 
@@ -162,7 +162,7 @@ namespace TaskHub.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
-            Assert.Equal("title", exception.ParamName);
+            Assert.Equal("Title", exception.ParamName);
             Assert.Contains("must not exceed 200 characters", exception.Message);
         }
 
@@ -180,7 +180,7 @@ namespace TaskHub.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
-            Assert.Equal("description", exception.ParamName);
+            Assert.Equal("Description", exception.ParamName);
             Assert.Contains("Description is required", exception.Message);
         }
 
@@ -198,7 +198,7 @@ namespace TaskHub.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
-            Assert.Equal("description", exception.ParamName);
+            Assert.Equal("Description", exception.ParamName);
             Assert.Contains("must not exceed 2000 characters", exception.Message);
         }
 
@@ -216,7 +216,7 @@ namespace TaskHub.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.CreateTaskAsync(request));
-            Assert.Equal("dueDate", exception.ParamName);
+            Assert.Equal("DueDate", exception.ParamName);
             Assert.Contains("must be today or a future date", exception.Message);
         }
 
@@ -309,7 +309,7 @@ namespace TaskHub.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
                 service.UpdateTaskAsync(1, request));
-            Assert.Equal("title", exception.ParamName);
+            Assert.Equal("Title", exception.ParamName);
         }
 
         [Fact]
